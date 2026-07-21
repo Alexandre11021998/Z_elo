@@ -2,6 +2,25 @@ from django import forms
 from .models import Pacientes
 
 class PacientesForm(forms.ModelForm):
+    data_nascimento = forms.DateField(
+        label='Data de Nascimento',
+        input_formats=['%d/%m/%Y', '%Y-%m-%d'],
+        widget=forms.DateInput(
+            format='%d/%m/%Y',
+            attrs={
+                'id': 'dataNascimento',
+                'type': 'text',
+                'inputmode': 'numeric',
+                'placeholder': 'DD/MM/AAAA',
+                'maxLength': '10',
+                'class': 'form-control',
+            }
+
+        ),
+        error_messages={
+            'invalid': 'Data de nascimento inválida. Use o formato DD/MM/AAAA.',
+        }
+    )
     class Meta:
         model = Pacientes
         fields = ['name', 'data_nascimento']

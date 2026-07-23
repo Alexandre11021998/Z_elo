@@ -6,6 +6,7 @@ class Pacientes(models.Model):
     data_nascimento = models.DateField(verbose_name="Data de Nascimento", validators=[validate_data_nascimento]
     )
     created_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name

@@ -1,15 +1,27 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
 from django.contrib import messages
+from django.db.models import Q
 from .models import Patient
 
 def lista_pacientes(request):
+    search_query = request.GET.get('q', '').strip()
+
     pacientes_ativos = Patient.objects.filter(is_active=True).order_by('name')
     pacientes_historico = Patient.objects.filter(is_active=False).order_by('name')
 
+    # Busca por nome
+    if search_query:
+        pacientes_ativos = pacientes_ativos.filter(name__incontains=search_query)
+        pacientes_historico = pacientes_historico.filter(name__incontains=search_query)
+
+        pacientes_ativos = pacientes_ativos.order_by('name')
+        pacientes_historico = pacientes_historico.order_by('name')
+
     return render(request, 'pacientes/lista.html', {
         'pacientes': pacientes_ativos,
-        'pacientes_historico': pacientes_historico
+        'pacientes_historico': pacientes_historico,
+        'search_query': search_query,
     })
 
 #Alterar status

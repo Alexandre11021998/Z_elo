@@ -1,0 +1,26 @@
+<form method="GET" action="{% url 'pacientes:lista' %}" class="mb-4">
+    <div class="position-relative d-flex align-items-center">
+        <!--Icone de pesquisa-->
+        <i class="bi bi-search position-absolute start-0 ms-3 text-primary"></i>
+
+        <!--Input de busca-->
+        <input
+            type="text"
+            name="q"
+            value="{{ search_query }}"
+            placeholder="Buscar paciente por nome..."
+            class="form-control ps-5 pe-5 border shadow-sm"
+            aria-label="Buscar paciente por nome"
+            />
+
+            <!--Botão de limpar-->
+            {% if seach_query %}
+                <a
+                  href="{% url 'pacientes:lista' %}"
+                  class="btn btn-sm btn-link text-secondary position-absolute end-0 me-2 text-decoration-none"
+                  title="Limpar busca">
+                  <i class="bi bi-x-lg"></i>
+                </a>
+                {% endif %}
+    </div>
+</form>

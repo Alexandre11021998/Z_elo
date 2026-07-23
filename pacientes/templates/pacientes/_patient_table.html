@@ -1,0 +1,156 @@
+<div class="table-responsive rounded-3 border bg-white shadown-sm">
+    <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+            <tr>
+                <th scope="col">Nome</th>
+                <th scope="col">Data de Nascimento</th>
+                <th scope="col">Status</th>
+                <th scope="col" class="text-end">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for patient in patients%}
+            <tr>
+                <!--Nome e quem alterou-->
+                <td>
+                    <div class="fw-bold">{{patient.name}}</div>
+                    {% if patient.update_by %}
+                    <small class="text-muted d-block" style="font-size: 0.75rem;">
+                        Aletrado por: {{patient.updated_by.get_full_name | default:patient.updated_by.username}}
+                    </small>
+                    {% endif %}
+                </td>
+                <!--Data de Nascimento-->
+                <td>{{patient.data_nascimento | date:"d/m/Y"}}</td>
+
+                <!--Status-->
+                <td>
+                    <span class="badge
+                    {% if patient.status == 'aguardando' %}bg-secondary text-white
+                    {% elif patient.status == 'em_preparacao'%}bg-warning text-dark
+                    {%elif patient.status == 'em_procedimento' %}bg-danger
+                     {% elif patient.status == 'recuperacao_pos_anestesica' %}bg-info text-dark
+                    {% elif patient.status == 'no_quarto' %}bg-primary
+                    {% elif patient.status == 'em_alta' %}bg-success
+                    {% endif %}">
+                    {{ patient.get_status_display }}
+          </span>
+        </td>">
+<!-- Ações -->
+        <td class="text-end">
+          <div class="d-inline-flex gap-1 align-items-center">
+
+            <!-- Botão QR Code (Gera Modal JS) -->
+            <button 
+              type="button" 
+              class="btn btn-sm btn-outline-primary"
+              data-bs-toggle="modal" 
+              data-bs-target="#qrModal-{{ patient.id }}"
+              title="Gerar QR Code">
+              <i class="bi bi-qr-code"></i>
+            </button>
+
+            <!-- Dropdown Mudar Status -->
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                Alterar Status
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end">
+                {% for code, label in patient.STATUS_CHOICES %}
+                  <li>
+                    <form action="{% url 'pacientes:mudar_status' patient.id %}" method="POST">
+                      {% csrf_token %}
+                      <input type="hidden" name="status" value="{{ code }}">
+                      <button 
+                        type="submit" 
+                        class="dropdown-item {% if patient.status == code %}active fw-bold{% endif %}"
+                        {% if patient.status == code %}disabled{% endif %}>
+                        {{ label }}
+                      </button>
+                    </form>
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+
+            <!-- Botão de Alta (Com Modal de Confirmação) -->
+            {% if show_discharge %}
+              <button 
+                type="button" 
+                class="btn btn-sm btn-outline-warning text-dark" 
+                data-bs-toggle="modal" 
+                data-bs-target="#altaModal-{{ patient.id }}">
+                <i class="bi bi-box-arrow-right"></i> Alta
+              </button>
+
+              <!-- Modal Alta -->
+              <div class="modal fade text-start" id="altaModal-{{ patient.id }}" tabindex="-1">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title">Confirmar Alta</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                      Deseja confirmar a alta do paciente <strong>{{ patient.name }}</strong>?<br>
+                      O paciente será movido para o histórico.
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                      <form action="{% url 'pacientes:dar_alta' patient.id %}" method="POST" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-warning">Confirmar Alta</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+
+            <!-- Botão Reativar (Com Modal de Confirmação) -->
+            {% if show_reactivate %}
+              <button 
+                type="button" 
+                class="btn btn-sm btn-outline-info" 
+                data-bs-toggle="modal" 
+                data-bs-target="#reativarModal-{{ patient.id }}">
+                <i class="bi bi-arrow-counterclockwise"></i> Reativar
+              </button>
+
+              <!-- Modal Reativar -->
+              <div class="modal fade text-start" id="reativarModal-{{ patient.id }}" tabindex="-1">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title">Reativar Paciente</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                      Deseja reativar o paciente <strong>{{ patient.name }}</strong>?<br>
+                      O paciente voltará para a lista de internados.
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                      <form action="{% url 'pacientes:reativar' patient.id %}" method="POST" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-info">Reativar</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+
+          </div>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="4" class="text-center py-4 text-muted">
+          Nenhum paciente encontrado.
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

@@ -62,3 +62,21 @@ def retorno_paciente(request, pk):
     paciente.save()
     messages.info(request, f"Paciente {paciente.name} adicionado com sucesso.")
     return redirect('paciente:lista')
+
+#Acompanhamento do Paciente
+def acompanhar_paciente(request, pk):
+    Pacientes = get_object_or_404(Pacientes, pk=pk)
+
+    steps = []
+    for index, (code, label) in enumerate(Pacientes.STATUS_CHOICES):
+        steps.append({
+            'code': code,
+            'label': label,
+            'index': index,
+            'is_completed': index < Pacientes.current_step_index,
+            'is_current': index == Pacientes.current_step_index
+        })
+    return render(request, 'pacientes/acompanhar.html', {
+        'pacientes': Pacientes,
+        'steps': steps,
+    })

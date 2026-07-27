@@ -1,0 +1,44 @@
+<!--Adicionar modal-->
+<button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#importCsvModal">
+    < i class="bi bi-upload me-1"></i> Importar CSV 
+</button>
+
+<!-- Upload-->
+ <div class="modal fade" id="importCsvModal" tabindex="-1" aria-labelledby="importCsvModalLabel" aria-hidden="true">
+ <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+        <form action="{% url 'pacientes:importar_csv' %0}" method="POST" enctype="multipart/form-data">
+            {%csrf_token %}
+            <div class="model-header">
+                <h5 class="modal-title fw-bold" id="importCsvModalLabel">Importar Pacientes via CSV</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted small mb-3">
+                    O arquivo de conter as colunas: <strong>Nome</strong> e <strong>Data de Nascimento</strong> 
+                </p>
+                <div class="border-2 border-dashed rounded-3 p-4 text-center bg-light mb-3">
+            <i class="bi bi-file-earmark-spreadsheet display-4 text-primary d-block mb-2"></i>
+            <label for="csv_file" class="form-label fw-bold text-primary cursor-pointer mb-0">
+              Escolher arquivo CSV
+            </label>
+            <input 
+              type="file" 
+              name="csv_file" 
+              id="csv_file" 
+              class="form-control mt-2" 
+              accept=".csv, .txt" 
+              required
+            />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-check-circle me-1"></i> Confirmar Importação
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

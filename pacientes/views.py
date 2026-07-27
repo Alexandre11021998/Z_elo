@@ -85,8 +85,8 @@ def lista_pacientes(request):
 
     # Busca por nome
     if search_query:
-        pacientes_ativos = pacientes_ativos.filter(name__incontains=search_query)
-        pacientes_historico = pacientes_historico.filter(name__incontains=search_query)
+        pacientes_ativos = pacientes_ativos.filter(name__icontains=search_query)
+        pacientes_historico = pacientes_historico.filter(name__icontains=search_query)
 
         pacientes_ativos = pacientes_ativos.order_by('name')
         pacientes_historico = pacientes_historico.order_by('name')

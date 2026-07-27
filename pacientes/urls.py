@@ -9,4 +9,5 @@ urlpatterns = [
     path('<int:pk>/alta/', views.dar_alta, name='em_alta'),
     path('<int:pk>/retorno/', views.retorno_paciente, name='retorno'),
     path('acompanhar/<int:pk>/', views.acompanhar_paciente, name='acompanhar'),
+    path('importar-csv/', views.importar_csv, name='importar_csv'),
 ]

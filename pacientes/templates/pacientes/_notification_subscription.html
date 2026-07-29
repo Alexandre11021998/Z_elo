@@ -1,0 +1,44 @@
+{% with subscribed_email=request.session|get_item:patient.session_key %}
+  {% if subscribed_email %}
+    <!-- Estado: Já Inscrito -->
+    <div class="mt-4 p-3 bg-light rounded-3 border border-success-subtle text-start">
+      <div class="d-flex align-items-center gap-3 text-success">
+        <i class="bi bi-check-circle-fill fs-4"></i>
+        <div>
+          <p class="fw-semibold mb-0 text-dark">Notificações ativadas</p>
+          <p class="text-muted small mb-0">Você receberá atualizações em <strong>{{ subscribed_email }}</strong></p>
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <!-- Form de Inscrição -->
+    <div class="mt-4 p-4 bg-light rounded-3 border text-start">
+      <div class="d-flex align-items-center gap-2 mb-2">
+        <i class="bi bi-bell-fill text-primary fs-5"></i>
+        <h6 class="fw-bold text-dark mb-0">Receber notificações por e-mail</h6>
+      </div>
+      <p class="text-muted small mb-3">
+        Cadastre seu e-mail para receber atualizações automáticas quando o status de <strong>{{ patient.name }}</strong> mudar.
+      </p>
+
+      <form method="POST" action="{% url 'pacientes:inscrever_notificacoes' patient.id %}" class="row g-2">
+        {% csrf_token %}
+        <div class="col-8 col-sm-9">
+          <input 
+            type="email" 
+            name="email" 
+            class="form-control" 
+            placeholder="seu@email.com" 
+            required
+          />
+        </div>
+        <div class="col-4 col-sm-3">
+          <button type="submit" class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-1">
+            <i class="bi bi-bell"></i>
+            <span>Ativar</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  {% endif %}
+{% endwith %}

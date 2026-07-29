@@ -2,12 +2,38 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
 from django.contrib import messages
 from django.db.models import Q
-from .models import Pacientes
+from .models import Pacientes, NotificationSubscription
 from datetime import datetime
 import csv
 import io
 import base64
 import qrcode
+
+@require_POST
+def inscrever_notificacoes(request, pk):
+    Pacientes = get_object_or_404(Pacientes, pk=pk)
+    email = require_POST.get('email','').strip().lower()
+
+    if not email or '@' not in email:
+        messages.error(request, 'Por favor, insira um e-mail válido.')
+        return redirect('pacientes:acompanhar', pk=pk)
+
+    try:
+        NotificationSubscription.objects.create(Pacientes=Pacientes, email=email)
+        messages.success(
+            request,
+            f'Notificações ativadas com sucesso! Você receberá atualizações em {email}.'
+        )
+        request.session[f'subscribed_{pk}'] = email
+
+    except IntegrityError:
+        messages.info(
+            request,
+            'Este email já esta cadastrado para receber notificações deste paciente'
+        )
+        request.session[f'subscribed_{pk}'] = email
+
+    return redirect('pacientes:acompanhar', pk=pk)
 
 def gerar_qrcode_base64(url):
     qr = qrcode.QRCode(

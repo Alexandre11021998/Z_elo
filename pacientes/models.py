@@ -45,4 +45,22 @@ class Pacientes(models.Model):
         if total_steps <= 0:
             return 0
         return int((self.current_step_index / total_steps) * 100)
+
+class NotificationSubscription(models.Model):
+    Pacientes = models.ForeignKey(
+        Pacientes,
+        on_delete=models.CASCADE,
+        related_name='subscriptions',
+        verbose_name="Paciente"
+    )
+    email = models.EmailField(verbose_name="E-mail do acompanhante")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Inscrição de Notificação"
+        verbose_name_plural = "Incrições de Notificações"
+        unique_together = ('Pacientes', 'email')
+
+    def __str__(self):
+        return f"{self.email} -> {self.Pacientes.name}"
         

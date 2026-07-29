@@ -119,6 +119,26 @@ def importar_csv(request):
 
     return redirect('pacientes:lista')
 
+def buscar_paciente(request):
+    erro = None
+    if request.method == 'POST':
+        nome = request.POST.get('nome', '').strip()
+        data_nascimento = request.POST.get('data_nascimento', '').strip()
+
+        # Busca o paciente correspondente
+        paciente = Pacientes.objects.filter(
+            nome__iexact=nome, 
+            data_nascimento=data_nascimento
+        ).first()
+
+        if paciente:
+            # Redireciona para a página de acompanhamento com a PK do paciente
+            return redirect('pacientes:acompanhar', pk=paciente.pk)
+        else:
+            erro = "Paciente não encontrado. Verifique o nome e a data de nascimento."
+
+    return render(request, 'pacientes/buscar_paciente.html', {'erro': erro})
+
                         
 
 

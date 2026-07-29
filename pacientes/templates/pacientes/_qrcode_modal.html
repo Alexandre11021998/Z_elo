@@ -1,0 +1,45 @@
+<!--QR Code para o Paciente -->
+<div class="modal fade" id="qrCodeModal {{ paciente.id}}" tabindex="-1" aria-labelledby="qrCodeModalLabel{{ patient.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+        <div class="modal-header">
+            <h5 class="modal title fw-bold d-flex aligh-items-center gap-2" id="qrCodeModalLabel{{ paciente.id}}">
+                <i class="bi bi-qr-code text-primary"></i> QR Code de Acesso </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body text-center p-4"
+        <p class="text-muted small"> Escaneie o código para acompanhar o status do paciente.</p>
+
+        <!-- Área de Impressão do Cartão -->
+        <div id="print-area-{{ patient.id }}" class="border rounded-3 p-4 bg-white shadow-sm d-inline-block my-2" style="max-width: 320px;">
+          <!-- Imagem do QR Code -->
+          <img src="{{ paciente.qr_code_base64 }}" alt="QR Code Acompanhamento" class="img-fluid mb-3" style="width: 180px; height: 180px;">
+
+          <h6 class="fw-bold mb-1 text-dark">{{ paciente.name }}</h6>
+          <p class="text-muted small mb-3">Nascimento: {{ paciente.data_nascimento|date:"d/m/Y" }}</p>
+
+          <div class="bg-light p-3 rounded text-start small border">
+            <strong class="d-block mb-1 text-dark">Instruções para o acompanhante:</strong>
+            <ol class="ps-3 mb-0 text-secondary">
+              <li>Aponte a câmera do celular para o QR Code</li>
+              <li>Acesse o link que aparecer</li>
+              <li>Acompanhe o status em tempo real</li>
+            </ol>
+          </div>
+
+          <p class="fw-bold text-primary mb-0 mt-3 small">♥ Zelo</p>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+        <button type="button" class="btn btn-primary" onclick="imprimirQrCode('print-area-{{ paciente.id }}', '{{ paciente.name }}')">
+          <i class="bi bi-printer me-1"></i> Imprimir Etiqueta
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

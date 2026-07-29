@@ -7,6 +7,7 @@
 
         <div class="d-flex justify-content-between align-items-center mb-4">
   <h1 class="h3 fw-bold text-primary mb-0">Painel do Hospital - Zelo</h1>
+
   
   <!-- COMPONENTE DE IMPORTAÇÃO CSV -->
   {% include 'pacientes/_csv_import_modal.html' %}
@@ -22,6 +23,39 @@
             <div class="d-flex justify-content-between aligh-items-center mb-4">
                 <h1 class="h3 fw-bold text-primaty">Painel do Hospital - Zelo</h1>
             </div>
+
+            <script>
+  function imprimirQrCode(elementId, patientName) {
+    const printContent = document.getElementById(elementId).outerHTML;
+    const printWindow = window.open('', '_blank');
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>QR Code - ${patientName}</title>
+          <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+          <style>
+            body {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              min-height: 100vh;
+              background-color: #ffffff;
+            }
+            @media print {
+              body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            }
+          </style>
+        </head>
+        <body onload="window.print(); window.close();">
+          ${printContent}
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+  }
+</script>
 
             <!-- Feedback ao alterar status/alta -->
        {% if messages %}

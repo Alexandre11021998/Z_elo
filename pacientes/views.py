@@ -6,7 +6,24 @@ from .models import Pacientes
 from datetime import datetime
 import csv
 import io
+import base64
+import qrcode
 
+def gerar_qrcode_base64(url):
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_M,
+        box_size=10,
+        border=2,
+    )
+    qr.add_data(url)
+    qr.make(fit=True)
+
+    img = qr.make_image(fill_color="black", back_color="white")
+    buffer = io.BytesIO()
+    img.save(buffer, format="PNG")
+    img_str = base64.b64encode(buffer.getvalue()).decode('uft-8')
+    return f"data:image/png;base64,{img_str}"
 @require_POST
 def importar_csv(request):
     csv_file = request.FILES.get('csv_file')
@@ -90,6 +107,17 @@ def lista_pacientes(request):
 
         pacientes_ativos = pacientes_ativos.order_by('name')
         pacientes_historico = pacientes_historico.order_by('name')
+
+        # Gerar dados para QR Code
+        for p in pacientes_ativos:
+            url_acompanhamento = request.build_absolute_uri(f'/acompanhar/{p.id}/')
+            p.qr_code_base64 = gerar_qrcode_base64(url_acompanhamento)
+
+            return render(request, 'pacientes/lista.html', {
+                'pacientes':pacientes_ativos,
+                'pacientes_historico': pacientes_historico,
+                'search_query':search_query,
+            })
 
     return render(request, 'pacientes/lista.html', {
         'pacientes': pacientes_ativos,

@@ -9,6 +9,8 @@ import io
 import base64
 import qrcode
 
+def home(request):
+    return render(request, 'zelo.html')
 @require_POST
 def inscrever_notificacoes(request, pk):
     Pacientes = get_object_or_404(Pacientes, pk=pk)
